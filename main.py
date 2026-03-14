@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
 from core.lifespan import lifespan
-from routers import chat, kg, admin
+from routers import chat, kg, admin, crew
 
 # ── Logging ──────────────────────────────────────────────────
 logging.basicConfig(
@@ -43,6 +43,7 @@ app.add_middleware(
 app.include_router(chat.router, tags=["Chat"])
 app.include_router(kg.router, prefix="/kg", tags=["Knowledge Graph"])
 app.include_router(admin.router, prefix="/kg", tags=["Admin"])
+app.include_router(crew.router)  # prefix="/crew" router içinde tanımlı
 
 
 # ── Health Check ─────────────────────────────────────────────
