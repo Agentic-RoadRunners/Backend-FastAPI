@@ -72,4 +72,6 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down SafeRoad AI Service…")
     await close_driver()
     await close_pool()
+    from db.neo4j_sync_client import close_sync_driver
+    close_sync_driver()  # sync — await yok
     logger.info("🔴 SafeRoad AI Service stopped")
