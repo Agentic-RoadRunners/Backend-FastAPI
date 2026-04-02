@@ -20,6 +20,8 @@ class Settings(BaseSettings):
 
     # OpenAI
     openai_api_key: str = Field(..., alias="OPENAI_API_KEY")
+    crew_model: str = Field(default="gpt-4o-mini", alias="CREW_MODEL")
+    chat_model: str = Field(default="gpt-4o-mini", alias="CHAT_MODEL")
 
     # .NET API
     dotnet_api_url: str = Field(
