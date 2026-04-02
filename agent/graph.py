@@ -44,7 +44,7 @@ _compiled_graph = None
 def _build_agent_graph():
     """Build and compile the LangGraph StateGraph."""
     llm = ChatOpenAI(
-        model="gpt-4o-mini",
+        model=settings.chat_model,
         api_key=settings.openai_api_key,
         temperature=0,
         max_tokens=1000,
