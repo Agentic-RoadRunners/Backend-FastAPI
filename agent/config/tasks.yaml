@@ -1,0 +1,59 @@
+classify_task:
+  description: >
+    Classify the following traffic incident. Respond with VALID JSON ONLY — no extra text.
+
+    Title: {title}
+    Description: {description}
+    Reported Category: {category}
+    Location: lat={lat}, lng={lng}
+
+    Output format:
+    {{"confirmed_category": "...", "severity": "...", "urgency_score": 0.0, "keywords": ["..."]}}
+  expected_output: >
+    Valid JSON object with confirmed_category, severity, urgency_score, keywords
+  agent: classifier_agent
+
+analyze_task:
+  description: >
+    Using the classification result from the previous step, analyze Neo4j.
+
+    Incident ID: {incident_id}
+    Coordinates: lat={lat}, lng={lng}
+
+    Find:
+    1. Similar incidents within 500m
+    2. Nearest LocationCluster (use get_cluster_info tool)
+    3. Municipality risk score in this area
+    4. 30-day incident trend
+
+    Produce a concise analysis report.
+  expected_output: >
+    Spatial analysis report including: nearby incidents list,
+    nearest cluster id (or 'none'), area risk score, 30-day trend
+  agent: graph_analyst_agent
+  context:
+    - classify_task
+
+update_task:
+  description: >
+    Update Neo4j based on the classifier and analyst results.
+
+    Incident ID: {incident_id}
+
+    Steps (in order):
+    1. Call neo4j_write_tool with severity and urgency_score from classifier output
+    2. If analyst found a cluster: call update_cluster_tool with existing cluster_id
+       If no cluster found: call update_cluster_tool with empty cluster_id and lat={lat}, lng={lng}
+    3. For up to 3 similar incidents found by analyst: call create_similar_to_tool
+    4. Call update_municipality_weight_tool with the municipality_id from analyst output
+       (query Neo4j first if municipality_id is unknown:
+       MATCH (i:Incident {{id: '{incident_id}'}})-[:IN_MUNICIPALITY]->(m) RETURN m.id)
+
+    Return a summary of all updates made.
+  expected_output: >
+    Update summary: severity set, cluster linked/created,
+    SIMILAR_TO relationships created, municipality weight updated
+  agent: graph_updater_agent
+  context:
+    - classify_task
+    - analyze_task
