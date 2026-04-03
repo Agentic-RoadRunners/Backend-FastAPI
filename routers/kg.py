@@ -27,6 +27,13 @@ from kg.schemas import (
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
+
+def _make_serializable(value):
+    """Convert neo4j temporal/spatial types to JSON-safe Python types."""
+    if hasattr(value, 'iso_format'):   # neo4j DateTime, Date, Time
+        return value.iso_format()
+    return value
+
 # ── Simple in-memory cache ───────────────────────────────────
 _graph_cache: dict = {"data": None, "timestamp": 0}
 CACHE_TTL_SECONDS = 60
@@ -79,7 +86,7 @@ async def get_graph(user: dict = Depends(get_current_user)):
             node_id = n.get("id", "")
             label = n.get("title") or n.get("name") or node_id
 
-            props = dict(n)
+            props = {k: _make_serializable(v) for k, v in dict(n).items()}
             props.pop("id", None)
 
             nodes.append(
