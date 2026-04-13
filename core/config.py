@@ -34,6 +34,14 @@ class Settings(BaseSettings):
     jwt_issuer: str = Field(default="SafeRoad", alias="JWT_ISSUER")
     jwt_audience: str = Field(default="SafeRoad", alias="JWT_AUDIENCE")
 
+    # LangSmith
+    langchain_tracing_v2: bool = Field(default=False, alias="LANGCHAIN_TRACING_V2")
+    langchain_api_key: str = Field(default="", alias="LANGCHAIN_API_KEY")
+    langchain_project: str = Field(default="saferoad-agent", alias="LANGCHAIN_PROJECT")
+    langchain_endpoint: str = Field(
+        default="https://api.smith.langchain.com", alias="LANGCHAIN_ENDPOINT"
+    )
+
     # App
     debug: bool = Field(default=False, alias="DEBUG")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
