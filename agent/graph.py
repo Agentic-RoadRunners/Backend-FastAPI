@@ -12,6 +12,7 @@ from typing import Annotated
 
 from langchain_core.messages import AIMessage, SystemMessage
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -111,7 +112,8 @@ def _build_agent_graph():
     )
     graph.add_edge("tools", "agent")
 
-    return graph.compile()
+    checkpointer = InMemorySaver()
+    return graph.compile(checkpointer=checkpointer)
 
 
 def get_agent():
