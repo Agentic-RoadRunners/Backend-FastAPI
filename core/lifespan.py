@@ -4,11 +4,13 @@ Handles startup (DB connections, KG build, agent init) and shutdown (cleanup).
 """
 
 import logging
+import os
 import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from core.config import settings
 from db.supabase_client import create_pool, close_pool
 from db.neo4j_client import create_driver, close_driver
 from kg.builder import build_knowledge_graph
@@ -29,6 +31,16 @@ async def lifespan(app: FastAPI):
     """
     # ── Startup ──────────────────────────────────────────────
     logger.info("🚀 Starting SafeRoad AI Service…")
+
+    # 0. LangSmith tracing
+    if settings.langchain_tracing_v2:
+        os.environ["LANGCHAIN_TRACING_V2"] = "true"
+        os.environ["LANGCHAIN_API_KEY"] = settings.langchain_api_key
+        os.environ["LANGCHAIN_PROJECT"] = settings.langchain_project
+        os.environ["LANGCHAIN_ENDPOINT"] = settings.langchain_endpoint
+        logger.info("LangSmith tracing enabled: project=%s", settings.langchain_project)
+    else:
+        logger.info("LangSmith tracing disabled")
 
     # 1. Neo4j
     try:
