@@ -17,6 +17,7 @@ class ChatRequest(BaseModel):
 
     message: str
     conversation_history: list[ChatMessage] = Field(default_factory=list)
+    thread_id: str = "default"
 
 
 class ChatResponse(BaseModel):
