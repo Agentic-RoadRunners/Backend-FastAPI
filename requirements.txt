@@ -13,6 +13,7 @@ neo4j==5.20.0
 langchain==1.2.12
 langchain-openai==1.1.11
 langgraph==1.1.2
+langsmith>=0.1.0
 openai==2.28.0
 
 # CrewAI (Senaryo B — multi-agent KG enrichment)
