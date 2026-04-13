@@ -38,6 +38,7 @@ async def chat(request: ChatRequest, user: dict = Depends(get_current_user)):
     # Invoke the agent
     try:
         agent = get_agent()
+        config = {"configurable": {"thread_id": request.thread_id}}
         result = await agent.ainvoke(
             {
                 "messages": messages,
@@ -46,6 +47,7 @@ async def chat(request: ChatRequest, user: dict = Depends(get_current_user)):
                 "tool_calls_made": [],
                 "iteration_count": 0,
             },
+            config=config,
         )
     except Exception as e:
         logger.error("Agent invocation failed: %s", e)
