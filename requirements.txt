@@ -9,6 +9,10 @@ python-dotenv==1.0.1
 asyncpg==0.29.0
 neo4j==5.20.0
 
+# MCP (starlette pin: fastmcp 3.x pulls starlette 1.x which breaks FastAPI 0.115)
+fastmcp>=2.0.0
+starlette>=0.37.2,<0.39.0
+
 # AI / LangGraph (crewai 0.80.0 ile uyumlu versiyonlar)
 langchain==1.2.12
 langchain-openai==1.1.11
