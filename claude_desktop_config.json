@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "saferoad": {
+      "command": "/Users/altugikiz/Documents/GitHub/agentic-RoadRunners/Backend-FastAPI/.venv/bin/python",
+      "args": ["/Users/altugikiz/Documents/GitHub/agentic-RoadRunners/Backend-FastAPI/mcp_server.py"]
+    }
+  }
+}
