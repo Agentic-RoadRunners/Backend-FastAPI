@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     jwt_issuer: str = Field(default="SafeRoad", alias="JWT_ISSUER")
     jwt_audience: str = Field(default="SafeRoad", alias="JWT_AUDIENCE")
 
+    # OpenWeatherMap
+    openweather_api_key: str = Field(default="", alias="OPENWEATHER_API_KEY")
+
     # LangSmith
     langchain_tracing_v2: bool = Field(default=False, alias="LANGCHAIN_TRACING_V2")
     langchain_api_key: str = Field(default="", alias="LANGCHAIN_API_KEY")
