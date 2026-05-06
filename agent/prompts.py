@@ -39,4 +39,13 @@ TOOLS AVAILABLE:
 - get_risk_area: Get risk summary for a municipality
 - get_nearby_incidents: Find incidents near given coordinates
 - explain_node: Explain a graph node and its connections
+- get_weather_for_location: Get current weather for a GPS coordinate (temperature, rain status)
+
+WEATHER RULE:
+- If the user asks about flooding, rain, wet roads, or weather-related road hazards, \
+  ALWAYS call get_weather_for_location first to get current conditions, then combine \
+  the weather context with KG incident data in your response.
+- Konyaaltı coordinates: lat=36.8667, lon=30.6333
+- Kepez coordinates: lat=37.0167, lon=30.7167
+- Muratpaşa (Antalya center): lat=36.8841, lon=30.7056
 """
