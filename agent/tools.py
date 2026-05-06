@@ -245,6 +245,49 @@ async def explain_node(node_id: str, node_type: str) -> dict:
         return {"error": f"Explain query failed: {e}"}
 
 
+# ══════════════════════════════════════════════════════════════
+#  Tool 6: get_weather_for_location
+# ══════════════════════════════════════════════════════════════
+
+@tool
+async def get_weather_for_location(latitude: float, longitude: float) -> dict:
+    """Get current weather conditions for a GPS location using OpenWeatherMap.
+    Use this when the user asks about flooding, rain, or weather-related road risks.
+    Returns temperature, weather description, and whether it is currently raining.
+
+    Args:
+        latitude: Latitude of the location (decimal degrees).
+        longitude: Longitude of the location (decimal degrees).
+    """
+    api_key = settings.openweather_api_key
+    if not api_key:
+        return {"error": "OpenWeatherMap API key not configured (OPENWEATHER_API_KEY)."}
+
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {"lat": latitude, "lon": longitude, "appid": api_key, "units": "metric", "lang": "tr"}
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(url, params=params)
+        if resp.status_code != 200:
+            return {"error": f"OpenWeatherMap returned status {resp.status_code}"}
+        data = resp.json()
+        weather_id = data.get("weather", [{}])[0].get("id", 0)
+        is_raining = 200 <= weather_id < 700  # thunderstorm, drizzle, rain, snow, atmosphere
+        return {
+            "temperature_celsius": data.get("main", {}).get("temp"),
+            "feels_like_celsius": data.get("main", {}).get("feels_like"),
+            "humidity_percent": data.get("main", {}).get("humidity"),
+            "description": data.get("weather", [{}])[0].get("description", ""),
+            "wind_speed_ms": data.get("wind", {}).get("speed"),
+            "is_raining_or_adverse": is_raining,
+            "weather_id": weather_id,
+            "city_name": data.get("name", ""),
+        }
+    except Exception as e:
+        logger.error("get_weather_for_location failed at (%.4f, %.4f): %s", latitude, longitude, e)
+        return {"error": f"Weather fetch failed: {e}"}
+
+
 # ── Export all tools ─────────────────────────────────────────
 ALL_TOOLS = [
     query_graph,
@@ -252,4 +295,5 @@ ALL_TOOLS = [
     get_risk_area,
     get_nearby_incidents,
     explain_node,
+    get_weather_for_location,
 ]
